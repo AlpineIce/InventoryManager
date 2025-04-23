@@ -1,0 +1,16 @@
+{
+  "name": "Inventory-Management",
+  "version": "1.0.0",
+  "description": "Program to automate doing inventory with barcode scanning capability and automatically calculating the output adjustment sheet",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Christopher Holgate",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^35.2.0"
+  }
+}
