@@ -9,8 +9,11 @@
   "keywords": [],
   "author": "Christopher Holgate",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "electron": "^35.2.0"
+  },
+  "dependencies": {
+    "node-hid": "^3.1.2"
   }
 }
