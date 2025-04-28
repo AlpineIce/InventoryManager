@@ -1,13 +1,18 @@
+import { window } from "./index.js";
+
 let items = new Map();
 
 export function addItem(code) {
     //create new entry starting at 0 if item doesnt exist in map yet
-    if(items.count(code) === 0) {
+    if(items.get(code) == null) {
         items.set(code, 0);
     }
 
     //increment by 1
-    items.set(code, items.get(code)++);
+    items.set(code, items.get(code) + 1);
+
+    //call callback
+    window.webContents.send('invoke-item-list-change', code, items.get(code));
 }
 
 export function removeItem(code) {
@@ -18,19 +23,30 @@ export function removeItem(code) {
     if(items.get(code) < 1) {
         items.delete(code);
     }
+
+    //call callback
+    window.webContents.send('invoke-item-list-change', code, items.get(code));
 }
 
 export function returnFiltered(filter) {
-    //create a new map to reference
-    let filtered = new Map();
+    //if filter is set, proceed with filtering
+    if(filter.length > 0) {
+        //create a new map to reference
+        let filtered = new Map();
+        
+        //filter
+        for(const [code, count] of items) {
+            if(code.includes(filter)) {
+                filtered.set(code, count);
+            }
+        };
 
-    //append items that include substring
-    items.forEach((count, code) => {
-        if(code.includes(filter)) {
-            filtered.set(code, count);
-        }
-    });
-
-    //return new filtered map
-    return filtered;
+        //return filtered map
+        return filtered;
+    }
+    //otherwise return all items
+    else {
+        
+        return items;
+    }    
 }

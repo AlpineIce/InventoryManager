@@ -1,4 +1,5 @@
 import * as HID from "node-hid"
+import { addItem } from "./items.js";
 
 const ASCIIKeys = {
     0x04: 0x61, // 'a'
@@ -55,7 +56,6 @@ const ASCIIKeys = {
 let devices = null;
 let selectedDevice = null;
 
-const decoder = new TextDecoder();
 let buffer = null;
 
 export function getDevices() {
@@ -66,9 +66,9 @@ export function getDevices() {
     return devices;
 }
 
-export function selectDevice(index, callback) {
+export function selectDevice(index) {
     //close current device if not null
-    if(selectedDevice != null) selectedDevice.close();
+    if(selectedDevice != null) { selectedDevice.close(); }
 
     // Find a specific device by vendorId and productId
     try {
@@ -90,16 +90,13 @@ export function selectDevice(index, callback) {
             //call callback and flush buffer if enter key hit
             if(characterData == 0x28) {
                 //debug log
-                console.log(buffer);
-                console.log(buffer.length);
+                console.log(buffer, buffer.length);
 
-                //callback
-                if(callback != null) {
-                    callback(buffer);
-                }
+                //add item to scanned list
+                addItem(buffer);
                 
                 //flush buffer
-                buffer = null;
+                buffer = '';
             } 
             //otherwise push to buffer
             else {

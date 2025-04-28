@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { addItem, removeItem, returnFiltered } from './items.js';
 
 //debug version info
 contextBridge.exposeInMainWorld('versions', {
@@ -11,9 +10,9 @@ contextBridge.exposeInMainWorld('versions', {
 
 //actual api stuff i guess
 contextBridge.exposeInMainWorld('APIbridge', {
-    addItem: () => addItem(),
-    removeItem: () => removeItem(),
-    returnFiltered: () => returnFiltered(),
+    returnFiltered: (filter) => ipcRenderer.invoke('return-filtered', filter),
+    invokeItemListchange: (callback) => ipcRenderer.on('invoke-item-list-change', (event, lastCode, lastValue) => callback(lastCode, lastValue)),
     getDevices: () => ipcRenderer.invoke('get-devices'),
-    selectDevice: (index, callback) => ipcRenderer.send('select-device', index, callback)
+    selectDevice: (index) => ipcRenderer.send('select-device', index),
+    outputFile: (catalog, adjustment) => ipcRenderer.invoke('output-file', catalog, adjustment)
 });

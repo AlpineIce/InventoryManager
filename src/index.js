@@ -4,16 +4,20 @@ import { join } from 'node:path';
 import path from 'path';
 import { fileURLToPath} from 'url';
 
+import { returnFiltered } from './items.js';
 import { getDevices, selectDevice } from './scanner.js';
+import { processOutput } from './sheets.js'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+export let window = null;
 
 //entry point
 function createWindow() {
     if(BrowserWindow.getAllWindows().length === 0) {
         //create window
-        const window = new BrowserWindow({
+        window = new BrowserWindow({
             width: 1280,
             height: 720,
             webPreferences: {
@@ -37,11 +41,13 @@ function createWindow() {
 
 app.whenReady().then(() => {
     //app events
+    ipcMain.handle('return-filtered', (event, filter) => { return returnFiltered(filter); })
     ipcMain.handle('get-devices', getDevices)
-    ipcMain.on('select-device', (event, index, callback) => { selectDevice(index, callback); });
+    ipcMain.on('select-device', (event, index) => { selectDevice(index); });
+    ipcMain.handle('output-file', (event, catalog, adjustment) => { processOutput(catalog, adjustment); })
 
     //window creation
-    createWindow()
+    createWindow();
   
     app.on('activate', () => {
         if(BrowserWindow.getAllWindows().length === 0) {

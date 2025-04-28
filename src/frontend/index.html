@@ -18,28 +18,23 @@
             <label for="scanned-filter">Filter</label>
             <input type="text" id="scanned-filter" name="scanned-filter">
             <ul id="scanned-item-list">
-                <li>
-                    <div class="scanned-item">
-                        <p>123456</p>
-                        <p>1</p>
-                    </div>
-                </li>
-                <li>
-                    <div class="scanned-item">
-                        <p>789012</p>
-                        <p>3</p>
-                    </div>
-                </li>
             </ul>
         </div>
         <div id="io-container" class="large-container input-container">
             <div id="device-list-container">
-                <h2>Selected Barcode Scanner</h2>
-                <label for="input-device-selection">Input Device</label>
+                <label for="input-device-selection">Input Device Selection</label>
                 <select name="inputs" id="input-device-selection">
                 </select>
             </div>
-            
+            <div id="input-catalog-sheet-container">
+                <label for="input-catalog-sheet-selection" class="file-label">Catalog Sheet File</label>
+                <input type="file" id="input-catalog-sheet-selection" accept=".xlsx">
+            </div>
+            <div id="input-adjust-sheet-container">
+                <label for="input-adjust-sheet-selection" class="file-label">Adjustment Sheet File</label>
+                <input type="file" id="input-adjust-sheet-selection" accept=".xlsx">
+            </div>
+            <button id="output-sheet-button">Export Output Sheet</button>
         </div>
     </body>
 </html>
