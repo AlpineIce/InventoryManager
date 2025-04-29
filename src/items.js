@@ -39,7 +39,7 @@ export function returnFiltered(filter) {
         
         //filter
         for(const [code, count] of items) {
-            if(code.includes(filter)) {
+            if(code.includes(filter.toUpperCase())) {
                 filtered.set(code, count);
             }
         };

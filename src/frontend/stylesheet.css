@@ -121,6 +121,17 @@ button:active {
     
 }
 
+#manual-add-button {
+    position: relative;
+    font-size: 18px;
+    margin: 5px 0px;
+    padding: 5px 0px;
+    min-width: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+}
+
 #scanned-item-list {
     overflow-x: visible;
     overflow-y: scroll;

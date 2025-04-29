@@ -62,67 +62,80 @@ async function updateLast(code, value) {
 }
 
 async function populateScannedList() {
-    //get list
+    //get list and add button
     const list = document.getElementById("scanned-item-list");
+    const manualAddButton = document.getElementById('manual-add-button');
 
-    //repopulate with filtered items
-    let listIndex = 0;
+    //get filtered items
     const items = await APIbridge.returnFiltered(filter);
-    for(const [code, count] of items) {
-        //get new list item
 
-        //create parent div element
-        const item = document.createElement('div');
-        item.classList.add('common-item');
+    //remove add button and display items if any exist
+    let listIndex = 0;
+    if(items.size > 0) {
+        //make button invisible
+        manualAddButton.style.display = 'none';
 
-        //set name p
-        const p1 = document.createElement('p');
-        p1.innerText = code;
-        item.appendChild(p1);
+        //repopulate with filtered items
+        for(const [code, count] of items) {
+            //get new list item
 
-        //create button container
-        const buttonContainer = document.createElement('div');
-        buttonContainer.classList.add("item-buttons-container");
+            //create parent div element
+            const item = document.createElement('div');
+            item.classList.add('common-item');
 
-        //append count to button container
-        const p2 = document.createElement('p');
-        p2.innerText = count;
-        buttonContainer.appendChild(p2);
-        
-        //create add button
-        const addBtn = document.createElement('button');
-        addBtn.innerText = "+";
-        addBtn.addEventListener("click", () => {
-            APIbridge.addItem(code);
-        })
-        buttonContainer.appendChild(addBtn);
+            //set name p
+            const p1 = document.createElement('p');
+            p1.innerText = code;
+            item.appendChild(p1);
 
-        //create remove button
-        const removeBtn = document.createElement('button');
-        removeBtn.innerText = "-";
-        removeBtn.addEventListener("click", () => {
-            APIbridge.removeItem(code);
-        })
-        buttonContainer.appendChild(removeBtn);
+            //create button container
+            const buttonContainer = document.createElement('div');
+            buttonContainer.classList.add("item-buttons-container");
 
-        //append buttonContainer to item
-        item.appendChild(buttonContainer);
+            //append count to button container
+            const p2 = document.createElement('p');
+            p2.innerText = count;
+            buttonContainer.appendChild(p2);
+            
+            //create add button
+            const addBtn = document.createElement('button');
+            addBtn.innerText = "+";
+            addBtn.addEventListener("click", () => {
+                APIbridge.addItem(code);
+            })
+            buttonContainer.appendChild(addBtn);
 
-        //append item to list
-        if(listIndex < list.children.length) {
-            list.children[listIndex].innerHTML = '';
-            list.children[listIndex].appendChild(item);
-        } else {
-            const li = document.createElement('li');
-            li.appendChild(item);
-            list.appendChild(li);
-        }
-        
-        //increment list index
-        listIndex++
-    };
+            //create remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.innerText = "-";
+            removeBtn.addEventListener("click", () => {
+                APIbridge.removeItem(code);
+            })
+            buttonContainer.appendChild(removeBtn);
 
-    //remove remaining children
+            //append buttonContainer to item
+            item.appendChild(buttonContainer);
+
+            //append item to list
+            if(listIndex < list.children.length) {
+                list.children[listIndex].innerHTML = '';
+                list.children[listIndex].appendChild(item);
+            } else {
+                const li = document.createElement('li');
+                li.appendChild(item);
+                list.appendChild(li);
+            }
+            
+            //increment list index
+            listIndex++
+        };
+    }
+    //no items shown, make button visible
+    else {
+        manualAddButton.style.display = 'inline';
+    }
+
+    //remove remaining children in list
     while(listIndex < list.children.length) {
         list.children[listIndex].remove();
     }
@@ -222,6 +235,12 @@ export function initUIListeners() {
     document.getElementById("scanned-filter").addEventListener("input", async (event) => {
         filter = event.target.value;
         await populateScannedList();
+    });
+
+    //manual add from filter when no items are shown
+    document.getElementById('manual-add-button').addEventListener("click", () => {
+        const code = document.getElementById("scanned-filter").value;
+        APIbridge.addItem(code);
     });
 
     //calculate and save output

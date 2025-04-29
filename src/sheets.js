@@ -159,7 +159,7 @@ export function processOutput(catalog, adjustment) {
 
             //log that it was suboptimal
             exportResults['suboptimalItems'].push({
-                code: referenceKey,
+                code: code,
                 reason: "Was found as a reference, not a scan code"
             });
         }
