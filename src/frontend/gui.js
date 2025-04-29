@@ -148,7 +148,7 @@ function showOutputResults(container, results) {
     //populate total adjusted
     document.getElementById("output-total-adjusted-item").children[1].innerText = results['itemsAdjusted'];
 
-    function populateInfo(list, results) {
+    function populateInfo(list, results, secondaryKey) {
         //clear list
         list.innerHTML = '';
 
@@ -157,27 +157,27 @@ function showOutputResults(container, results) {
             const li = document.createElement('li');
 
             //create parent div element
-            const item = document.createElement('div');
-            item.classList.add('common-item');
+            const container = document.createElement('div');
+            container.classList.add('common-item');
 
             //set name p
             const p1 = document.createElement('p');
             p1.innerText = item['code'];
-            item.appendChild(p1);
+            container.appendChild(p1);
             
             //set value p
             const p2 = document.createElement('p');
-            p2.innerText = item['count'];
-            item.appendChild(p2);
+            p2.innerText = item[secondaryKey];
+            container.appendChild(p2);
             
-            li.appendChild(item);
+            li.appendChild(container);
             list.appendChild(li);
         }
     }
     
     //populate errors and suboptimals
-    populateInfo(document.getElementById("error-list"), results['badItems']);
-    populateInfo(document.getElementById("suboptimal-list"), results['suboptimalItems']);
+    populateInfo(document.getElementById("error-list"), results['badItems'], 'count');
+    populateInfo(document.getElementById("suboptimal-list"), results['suboptimalItems'], 'reason');
 
     //make output visible
     container.style.display = "flex";
