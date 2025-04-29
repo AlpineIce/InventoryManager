@@ -43,8 +43,8 @@ app.whenReady().then(() => {
     //app events
     ipcMain.handle('return-filtered', (event, filter) => { return returnFiltered(filter); })
     ipcMain.handle('get-devices', getDevices)
-    ipcMain.on('select-device', (event, index) => { selectDevice(index); });
-    ipcMain.handle('output-file', (event, catalog, adjustment) => { processOutput(catalog, adjustment); })
+    ipcMain.on('select-device', (event, index) => { return selectDevice(index); });
+    ipcMain.handle('output-file', (event, catalog, adjustment) => { return processOutput(catalog, adjustment); })
 
     //window creation
     createWindow();

@@ -3,6 +3,9 @@ import { window } from "./index.js";
 let items = new Map();
 
 export function addItem(code) {
+    //make uppercase
+    code = code.toUpperCase();
+    
     //create new entry starting at 0 if item doesnt exist in map yet
     if(items.get(code) == null) {
         items.set(code, 0);

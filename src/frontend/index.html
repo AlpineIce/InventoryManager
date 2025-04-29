@@ -10,7 +10,7 @@
     <body>
         <div id="scanned-container" class="large-container">
             <h2>Last Scanned Item</h2>
-            <div id="last-scanned-item" class="scanned-item">
+            <div id="last-scanned-item" class="common-item static-grayed-common-item">
                 <p>123456</p>
                 <p>1</p>
             </div>
@@ -34,7 +34,26 @@
                 <label for="input-adjust-sheet-selection" class="file-label">Adjustment Sheet File</label>
                 <input type="file" id="input-adjust-sheet-selection" accept=".xlsx">
             </div>
-            <button id="output-sheet-button">Export Output Sheet</button>
+            <button id="output-sheet-button" class="main-button">Export Output Sheet</button>
+        </div>
+        <div id="output-results-container" class="large-container input-container">
+            <h2>Results</h2>
+            <div id="output-total-adjusted-item" class="common-item static-grayed-common-item">
+                <p>Successfully Adjusted: </p>
+                <p>-1</p>
+            </div>
+            <div id="output-results-lists">
+                <h3>Errors</h3>
+                <li id="error-list">
+                </li>
+                <h3>Suboptimal</h3>
+                <li id="suboptimal-list">
+                </li>
+            </div>
+            <button id="clear-results-button" class="main-button">Return</button>
+        </div>
+        <div id="pending-results-container" class="large-container input-container">
+            <h1>Output Pending...</h1>
         </div>
     </body>
 </html>

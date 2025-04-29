@@ -62,39 +62,70 @@ async function updateLast(code, value) {
 }
 
 async function populateScannedList() {
+    //get list
     const list = document.getElementById("scanned-item-list");
 
     //repopulate with filtered items
     let listIndex = 0;
     const items = await APIbridge.returnFiltered(filter);
     for(const [code, count] of items) {
+        //get new list item
+
         //create parent div element
-        const div = document.createElement('div');
-        div.classList.add('scanned-item');
+        const item = document.createElement('div');
+        item.classList.add('common-item');
 
         //set name p
         const p1 = document.createElement('p');
         p1.innerText = code;
-        div.appendChild(p1);
-        
-        //set value p
+        item.appendChild(p1);
+
+        //create button container
+        const buttonContainer = document.createElement('div');
+        buttonContainer.classList.add("item-buttons-container");
+
+        //append count to button container
         const p2 = document.createElement('p');
         p2.innerText = count;
-        div.appendChild(p2);
+        buttonContainer.appendChild(p2);
+        
+        //create add button
+        const addBtn = document.createElement('button');
+        addBtn.innerText = "+";
+        addBtn.addEventListener("click", () => {
+            console.log("todo")
+        })
+        buttonContainer.appendChild(addBtn);
 
-        //append to list
+        //create remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.innerText = "-";
+        removeBtn.addEventListener("click", () => {
+            console.log("todo")
+        })
+        buttonContainer.appendChild(removeBtn);
+
+        //append buttonContainer to item
+        item.appendChild(buttonContainer);
+
+        //append item to list
         if(listIndex < list.children.length) {
             list.children[listIndex].innerHTML = '';
-            list.children[listIndex].appendChild(div);
+            list.children[listIndex].appendChild(item);
         } else {
             const li = document.createElement('li');
-            li.appendChild(div);
+            li.appendChild(item);
             list.appendChild(li);
         }
         
         //increment list index
         listIndex++
     };
+
+    //remove remaining children
+    while(listIndex < list.children.length) {
+        list.children[listIndex].remove();
+    }
 }
 
 async function loadFile(file) {
@@ -108,7 +139,50 @@ async function loadFile(file) {
     });
     return await promise; 
 }
-  
+
+function showOutputResults(container, results) {
+    //populate total adjusted
+    document.getElementById("output-total-adjusted-item").children[1].innerText = results['itemsAdjusted'];
+
+    function populateInfo(list, results) {
+        //clear list
+        list.innerHTML = '';
+
+        //append items to list
+        for(const item of results) {
+            const li = document.createElement('li');
+
+            //create parent div element
+            const item = document.createElement('div');
+            item.classList.add('common-item');
+
+            //set name p
+            const p1 = document.createElement('p');
+            p1.innerText = item['code'];
+            item.appendChild(p1);
+            
+            //set value p
+            const p2 = document.createElement('p');
+            p2.innerText = item['count'];
+            item.appendChild(p2);
+            
+            li.appendChild(item);
+            list.appendChild(li);
+        }
+    }
+    
+    //populate errors and suboptimals
+    populateInfo(document.getElementById("error-list"), results['badItems']);
+    populateInfo(document.getElementById("suboptimal-list"), results['suboptimalItems']);
+
+    //make output visible
+    container.style.display = "flex";
+    
+    //add event to clear
+    document.getElementById("clear-results-button").addEventListener("click", () => {
+        container.style.display = "none";
+    })
+}
 
 export function initUIListeners() {
     //update scanned list
@@ -135,25 +209,36 @@ export function initUIListeners() {
 
     //save output file event
     document.getElementById("output-sheet-button").addEventListener("click", async () => {
-        //grab files
-        const catalogFile = document.getElementById("input-catalog-sheet-selection").files[0];
-        const adjustFile = document.getElementById("input-adjust-sheet-selection").files[0];
+        //show pending feedback
+        const pendingContainer = document.getElementById("pending-results-container")
+        pendingContainer.style.display = "flex"
+        try {
+            //get output container
+            const outputContainer = document.getElementById("output-results-container");
 
-        //verify they are validc
-        if(catalogFile == undefined) {
-            alert("Catalog file not selected");
-            return;
+            //grab files
+            const catalogFile = document.getElementById("input-catalog-sheet-selection").files[0];
+            const adjustFile = document.getElementById("input-adjust-sheet-selection").files[0];
+
+            //verify they are valid
+            if(catalogFile == undefined) {
+                throw new Error("Catalog file not selected");
+            }
+            else if(adjustFile == undefined) {
+                throw new Error("Adjustment file not selected");
+            }
+
+            //read file data
+            const catalogData = await loadFile(catalogFile);
+            const adjustData = await loadFile(adjustFile);
+
+            //populate and show results after outputting
+            showOutputResults(outputContainer, await APIbridge.outputFile(catalogData, adjustData))
+        } catch(error) {
+            alert(error);
         }
-        else if(adjustFile == undefined) {
-            alert("Adjustment file not selected");
-            return;
-        }
 
-        //read file data
-        const catalogData = await loadFile(catalogFile);
-        const adjustData = await loadFile(adjustFile);
-
-        //output
-        APIbridge.outputFile(catalogData, adjustData);
+        //remove pending container
+        pendingContainer.style.display = "none"
     });
 }
