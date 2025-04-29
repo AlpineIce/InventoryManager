@@ -148,6 +148,16 @@ function showOutputResults(container, results) {
     //populate total adjusted
     document.getElementById("output-total-adjusted-item").children[1].innerText = results['itemsAdjusted'];
 
+    //verify sheets were good first
+    if(!results['catalogValid']) {
+        alert("Bad catalog sheet was detected. Please make sure columns are setup properly per usage instructions. Output has failed.");
+        return;
+    }
+    if(!results['adjustmentvalid']) {
+        alert("Bad adjustment sheet was detected. Please make sure columns are setup properly per usage instructions. Output has failed.");
+        return;
+    }
+
     function populateInfo(list, results, secondaryKey) {
         //clear list
         list.innerHTML = '';
@@ -274,4 +284,12 @@ export function initUIListeners() {
             console.log("Restored auto saved session");
         }
     });
+
+    //reset event
+    document.getElementById("header-reset-button").addEventListener("click", async () => {
+        await APIbridge.setItems(new Map());
+        populateScannedList();
+        console.log("Reset session");
+    });
+    
 }
