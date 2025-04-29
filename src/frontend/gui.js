@@ -93,7 +93,7 @@ async function populateScannedList() {
         const addBtn = document.createElement('button');
         addBtn.innerText = "+";
         addBtn.addEventListener("click", () => {
-            console.log("todo")
+            APIbridge.addItem(code);
         })
         buttonContainer.appendChild(addBtn);
 
@@ -101,7 +101,7 @@ async function populateScannedList() {
         const removeBtn = document.createElement('button');
         removeBtn.innerText = "-";
         removeBtn.addEventListener("click", () => {
-            console.log("todo")
+            APIbridge.removeItem(code);
         })
         buttonContainer.appendChild(removeBtn);
 
@@ -138,6 +138,10 @@ async function loadFile(file) {
         reader.readAsArrayBuffer(file);
     });
     return await promise; 
+}
+
+async function autoSave() {
+    localStorage['auto'] = JSON.stringify(Array.from((await APIbridge.returnFiltered('')).entries()));
 }
 
 function showOutputResults(container, results) {
@@ -195,6 +199,9 @@ export function initUIListeners() {
 
         //update scanned list
         populateScannedList();
+
+        //auto save
+        autoSave();
     });
 
     //async stuff for input device
@@ -207,7 +214,7 @@ export function initUIListeners() {
         await populateScannedList();
     });
 
-    //save output file event
+    //calculate and save output
     document.getElementById("output-sheet-button").addEventListener("click", async () => {
         //show pending feedback
         const pendingContainer = document.getElementById("pending-results-container")
@@ -240,5 +247,31 @@ export function initUIListeners() {
 
         //remove pending container
         pendingContainer.style.display = "none"
+    });
+
+    //save session event
+    document.getElementById("header-save-button").addEventListener("click", async () => {
+        localStorage['manual'] = JSON.stringify(Array.from((await APIbridge.returnFiltered('')).entries()));
+        console.log(localStorage.getItem('manual'));
+    });
+
+    //load saved session event
+    document.getElementById("header-load-button").addEventListener("click", async () => {
+        const storage = localStorage.getItem('manual');
+        if(storage != null) {
+            await APIbridge.setItems(new Map(JSON.parse(storage)));
+            populateScannedList();
+            console.log("Restored saved session");
+        }
+    });
+
+    //restore session event
+    document.getElementById("header-restore-button").addEventListener("click", async () => {
+        const storage = localStorage.getItem('auto');
+        if(storage != null) {
+            await APIbridge.setItems(new Map(JSON.parse(storage)));
+            populateScannedList();
+            console.log("Restored auto saved session");
+        }
     });
 }

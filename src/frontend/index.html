@@ -8,11 +8,16 @@
         <script type="module" src="entry.js"></script>
     </head>
     <body>
+        <div id="header" class="large-container">
+            <button id="header-save-button">Save</button>
+            <button id="header-load-button">Load Saved</button>
+            <button id="header-restore-button">Restore</button>
+        </div>
         <div id="scanned-container" class="large-container">
-            <h2>Last Scanned Item</h2>
+            <h2>Last Modified Item</h2>
             <div id="last-scanned-item" class="common-item static-grayed-common-item">
-                <p>123456</p>
-                <p>1</p>
+                <p>Select input device and scan to begin</p>
+                <p></p>
             </div>
             <h2>All Scanned Items</h3>
             <label for="scanned-filter">Filter</label>

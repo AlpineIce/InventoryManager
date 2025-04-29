@@ -20,7 +20,7 @@ export function addItem(code) {
 
 export function removeItem(code) {
     //decrement by 1
-    items.set(code, items.get(code)--);
+    items.set(code, items.get(code) - 1);
 
     //remove item if less than 1 count (0)
     if(items.get(code) < 1) {
@@ -53,3 +53,5 @@ export function returnFiltered(filter) {
         return items;
     }    
 }
+
+export function setItems(newItems) { items = newItems; }

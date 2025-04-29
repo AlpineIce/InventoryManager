@@ -73,6 +73,7 @@ button:active {
 
 .large-container {
     position: fixed;
+    background-color: white;
 }
 
 .input-container {
@@ -81,9 +82,26 @@ button:active {
     box-shadow: var(--global-box-shadow);
 }
 
+#header {
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+
+    button {
+        font-size: 18px;
+        border-radius: 10px;
+        width: 150px;
+        height: 40px;
+        margin: 0px 25px;
+    }
+}
+
 #scanned-container {
     left: 75px;
-    top: 75px;
+    top: 125px;
     bottom: 75px;
     border-radius: var(--global-border-radius);
     padding: var(--global-padding);
@@ -136,7 +154,8 @@ button:active {
 
 #io-container {
     right: 75px;
-    top: 75px;
+    top: 125px;
+    z-index: 1;
 
     --font-size: 18px;
     
@@ -171,7 +190,6 @@ button:active {
     top: 50%;
     transform: translate(-50%, -50%);
     max-height: 70%;
-    background-color: white;
     display: none;
     justify-content: space-around;
     flex-direction: column;
@@ -204,7 +222,6 @@ button:active {
     top: 50%;
     transform: translate(-50%, -50%);
     padding: 150px;
-    background-color: white;
     z-index: 1001;
     display: none;
 }

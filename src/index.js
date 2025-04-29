@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import path from 'path';
 import { fileURLToPath} from 'url';
 
-import { returnFiltered } from './items.js';
+import { addItem, removeItem, returnFiltered, setItems } from './items.js';
 import { getDevices, selectDevice } from './scanner.js';
 import { processOutput } from './sheets.js'
 
@@ -29,10 +29,6 @@ function createWindow() {
 
         //remove top bar
         window.setMenuBarVisibility(false);
-        
-        window.webContents.session.setDevicePermissionHandler((details) => {
-            if(details.deviceType === 'hid' && details.origin === 'file://') return true;
-        })
 
         //load HTML
         window.loadFile(join(__dirname, "frontend/index.html"));
@@ -41,17 +37,20 @@ function createWindow() {
 
 app.whenReady().then(() => {
     //app events
-    ipcMain.handle('return-filtered', (event, filter) => { return returnFiltered(filter); })
-    ipcMain.handle('get-devices', getDevices)
+    ipcMain.on('add-item', (event, item) => { return addItem(item); });
+    ipcMain.on('remove-item', (event, item) => { return removeItem(item); });
+    ipcMain.on('set-items', (event, items) => { return setItems(items); });
+    ipcMain.handle('return-filtered', (event, filter) => { return returnFiltered(filter); });
+    ipcMain.handle('get-devices', getDevices);
     ipcMain.on('select-device', (event, index) => { return selectDevice(index); });
-    ipcMain.handle('output-file', (event, catalog, adjustment) => { return processOutput(catalog, adjustment); })
+    ipcMain.handle('output-file', (event, catalog, adjustment) => { return processOutput(catalog, adjustment); });
 
     //window creation
     createWindow();
   
     app.on('activate', () => {
         if(BrowserWindow.getAllWindows().length === 0) {
-            createWindow()
+            createWindow();
         }
     })
 })

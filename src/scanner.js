@@ -90,7 +90,7 @@ export function selectDevice(index) {
             //call callback and flush buffer if enter key hit
             if(characterData == 0x28) {
                 //debug log
-                console.log(buffer, buffer.length);
+                console.log(buffer);
 
                 //add item to scanned list
                 addItem(buffer);
