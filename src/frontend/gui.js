@@ -55,10 +55,57 @@ function setupInputDevicesListeners(list) {
     });
 }
 
+function createItemEntry(code, count) {
+    //create parent div element
+    const item = document.createElement('div');
+    item.classList.add('common-item');
+
+    //set name p
+    const p1 = document.createElement('p');
+    p1.innerText = code;
+    item.appendChild(p1);
+
+    //create button container
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add("item-buttons-container");
+
+    //append count to button container
+    const p2 = document.createElement('p');
+    p2.innerText = count;
+    buttonContainer.appendChild(p2);
+    
+    //create add button
+    const addBtn = document.createElement('button');
+    addBtn.innerText = "+";
+    addBtn.addEventListener("click", () => {
+        APIbridge.addItem(code);
+    })
+    buttonContainer.appendChild(addBtn);
+
+    //create remove button
+    const removeBtn = document.createElement('button');
+    removeBtn.innerText = "-";
+    removeBtn.addEventListener("click", () => {
+        APIbridge.removeItem(code);
+    })
+    buttonContainer.appendChild(removeBtn);
+
+    //append buttonContainer to item
+    item.appendChild(buttonContainer);
+
+    //return
+    return item;
+}
+
 async function updateLast(code, value) {
+    //get container
     const container = document.getElementById("last-scanned-item");
-    container.children[0].innerText = code;
-    container.children[1].innerText = value;
+    container.innerHTML = '';
+
+    //update contents if value is valid
+    if(value != undefined) {
+        container.appendChild(createItemEntry(code, value));
+    }
 }
 
 async function populateScannedList() {
@@ -77,44 +124,8 @@ async function populateScannedList() {
 
         //repopulate with filtered items
         for(const [code, count] of items) {
-            //get new list item
-
-            //create parent div element
-            const item = document.createElement('div');
-            item.classList.add('common-item');
-
-            //set name p
-            const p1 = document.createElement('p');
-            p1.innerText = code;
-            item.appendChild(p1);
-
-            //create button container
-            const buttonContainer = document.createElement('div');
-            buttonContainer.classList.add("item-buttons-container");
-
-            //append count to button container
-            const p2 = document.createElement('p');
-            p2.innerText = count;
-            buttonContainer.appendChild(p2);
-            
-            //create add button
-            const addBtn = document.createElement('button');
-            addBtn.innerText = "+";
-            addBtn.addEventListener("click", () => {
-                APIbridge.addItem(code);
-            })
-            buttonContainer.appendChild(addBtn);
-
-            //create remove button
-            const removeBtn = document.createElement('button');
-            removeBtn.innerText = "-";
-            removeBtn.addEventListener("click", () => {
-                APIbridge.removeItem(code);
-            })
-            buttonContainer.appendChild(removeBtn);
-
-            //append buttonContainer to item
-            item.appendChild(buttonContainer);
+            //get new item
+            const item = createItemEntry(code, count);
 
             //append item to list
             if(listIndex < list.children.length) {
