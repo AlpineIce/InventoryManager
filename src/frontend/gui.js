@@ -159,7 +159,7 @@ async function autoSave() {
 
 function showOutputResults(container, results) {
     //populate total adjusted
-    document.getElementById("output-total-adjusted-item").children[1].innerText = results['itemsAdjusted'];
+    document.getElementById("output-total-adjusted-item").children[1].innerText = results['itemsAdjusted']
 
     //verify sheets were good first
     if(!results['catalogValid']) {
@@ -199,7 +199,7 @@ function showOutputResults(container, results) {
     }
     
     //populate errors and suboptimals
-    populateInfo(document.getElementById("error-list"), results['badItems'], 'count');
+    populateInfo(document.getElementById("error-list"), results['badItems'], 'reason');
     populateInfo(document.getElementById("suboptimal-list"), results['suboptimalItems'], 'reason');
 
     //make output visible

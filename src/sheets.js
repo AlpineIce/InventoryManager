@@ -102,15 +102,6 @@ export function processOutput(catalog, adjustment) {
 
     //adjust output sheet based on items scanned
     for(const [code, count] of returnFiltered("")) {
-        //push bad helper function
-        function pushBad(code, count, error) {
-            exportResults['badItems'].push({
-                code: code,
-                count: count,
-                error: error
-            });
-        }
-        
         //helper set adjustment function
         function setAdjustment(referenceKey) {
             //verify adjustment key
@@ -136,7 +127,10 @@ export function processOutput(catalog, adjustment) {
             }
             else {
                 //well shit!
-                pushBad(code, count, "Found in catalog, but not in adjustment sheet");
+                exportResults['badItems'].push({
+                    code: code,
+                    reason: "Found in catalog, but not in adjustment sheet"
+                });
             }
         }
 
@@ -147,15 +141,16 @@ export function processOutput(catalog, adjustment) {
             const referenceKey = catalogBook.Sheets['Export']['D' + scanCodeIndex].v;
             
             //adjust
-            setAdjustment(referenceKey);
+            setAdjustment(String(referenceKey).toUpperCase());
         }
         //then legacy code if that failed
         else if(sheetData['catalog']['properties'].get('D').has(code)) {
             //get reference key from scan code
-            const referenceKey = sheetData['catalog']['properties'].get('D').get(code);
+            const referenceIndex = sheetData['catalog']['properties'].get('D').get(code);
+            const referenceKey = catalogBook.Sheets['Export']['D' + referenceIndex].v
             
             //adjust
-            setAdjustment(referenceKey);
+            setAdjustment(String(referenceKey).toUpperCase());
 
             //log that it was suboptimal
             exportResults['suboptimalItems'].push({
@@ -164,8 +159,11 @@ export function processOutput(catalog, adjustment) {
             });
         }
         //bad item
-        else {
-            pushBad(code, count, "Not found in catalog");
+        else {            
+            exportResults['badItems'].push({
+                code: code,
+                reason: "Not found in catalog"
+            });
         }
     }
 
