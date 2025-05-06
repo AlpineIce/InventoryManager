@@ -119,8 +119,7 @@ export function processOutput(catalog, adjustment) {
                 }
 
                 //change adjustment value
-                const adjustmentValue = adjustmentBook.Sheets['Export']['C' + adjustmentIndex].v;
-                adjustmentBook.Sheets['Export']['C' + adjustmentIndex].v = (count + adjustmentValue) - currentQty;
+                adjustmentBook.Sheets['Export']['C' + adjustmentIndex].v = (count - currentQty);
 
                 //increment total adjusted result
                 exportResults['itemsAdjusted']++;
