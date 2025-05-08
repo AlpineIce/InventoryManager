@@ -1,5 +1,7 @@
 let filteredDevices = null;
 let filter = '';
+let inputBuffer = "";
+let inputTimeout;
 
 async function populateDeviceList(devices, list, lastSelected) {
     //wait for async event
@@ -13,11 +15,12 @@ async function populateDeviceList(devices, list, lastSelected) {
     let deviceIndex = 0;
     for(let i = 0; i < devices.length; i++) {
         //continue if bad usage flags
-        if(devices[i].usage & 0b100 && devices[i].usage & 0b010) {
+        if(true) {
             //create element and assign its value as the array index
             const element = document.createElement("option");
-            element.value = deviceIndex;
+            element.value = i;
             element.innerText = devices[i].product;
+            console.log(deviceIndex);
 
             //assign default text if it doesnt exist
             if(element.innerText.length === 0) {
@@ -51,6 +54,7 @@ function setupInputDevicesListeners(list) {
     //event listener for changing the option
     list.addEventListener("change", (event) => {
         //open device at index
+        console.log(event.target.value);
         APIbridge.selectDevice(event.target.value)
     });
 }
@@ -239,8 +243,27 @@ export function initUIListeners() {
     });
 
     //async stuff for input device
-    const list = document.getElementById("input-device-selection");
-    setupInputDevicesListeners(list);
+    //const list = document.getElementById("input-device-selection");
+    //setupInputDevicesListeners(list);
+    document.addEventListener("keydown", (event) => {
+        //refresh timeout to flush buffer
+        clearTimeout(inputTimeout);
+        inputTimeout = setTimeout(() => {
+            inputBuffer = "";
+            console.log("Buffer timed out");
+        }, 1000);
+
+        //flush buffer if enter is hit
+        console.log(event.key);
+        if(event.key == "Enter") {
+            APIbridge.addItem(inputBuffer);
+            inputBuffer = "";
+        }
+        //else add input
+        else {
+            inputBuffer += event.key
+        }
+    })
 
     //update GUI list when filter changes
     document.getElementById("scanned-filter").addEventListener("input", async (event) => {
