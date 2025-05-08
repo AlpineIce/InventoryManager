@@ -66,42 +66,55 @@ export function getDevices() {
     return devices;
 }
 
-export function selectDevice(index) {
+export async function selectDevice(index) {
     //close current device if not null
     if(selectedDevice != null) { selectedDevice.close(); }
 
     // Find a specific device by vendorId and productId
     try {
-        selectedDevice = new HID.HID(devices[index].path);
+        //open device and log
+        selectedDevice = await HID.HIDAsync.open(devices[index].path);
+        console.log(selectedDevice);
+
+        //handle errors by closing device
+        selectedDevice.on("error", (error) => {
+            //log error
+            console.log(error);
+
+            //close device and set to null
+            selectedDevice.close();
+            selectedDevice = null;
+        });
+
+        //device input handler
+        selectedDevice.on("data", (data) => {
+            //reset buffer if needed
+            if(buffer == null) {
+                buffer = new String();
+            }
+            console.log(data);
+
+            //interpret data
+            const characterData = data[2];
+            if(characterData != 0) {
+                //call callback and flush buffer if enter key hit
+                if(characterData == 0x28) {
+                    //debug log
+                    console.log(buffer);
+
+                    //add item to scanned list
+                    addItem(buffer);
+                    
+                    //flush buffer
+                    buffer = '';
+                } 
+                //otherwise push to buffer
+                else {
+                    buffer += String.fromCharCode(ASCIIKeys[characterData]);
+                }
+            }
+        });
     } catch(error) {
         console.log(error);
     }
-
-    // Read data from the device
-    selectedDevice.on('data', data => {
-        //reset buffer if needed
-        if(buffer == null) {
-            buffer = new String();
-        }
-
-        //interpret data
-        const characterData = data[2];
-        if(characterData != 0) {
-            //call callback and flush buffer if enter key hit
-            if(characterData == 0x28) {
-                //debug log
-                console.log(buffer);
-
-                //add item to scanned list
-                addItem(buffer);
-                
-                //flush buffer
-                buffer = '';
-            } 
-            //otherwise push to buffer
-            else {
-                buffer += String.fromCharCode(ASCIIKeys[characterData]);
-            }
-        }
-    });
 }
